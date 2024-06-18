@@ -3,7 +3,7 @@ import { UserContext } from '../../utils/UserContext';
 import { List, ListItem, Card, CardContent, Typography, Divider, Container, CircularProgress, Snackbar, Button } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
-import api from '../../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../../axiosConfig'; 
 
 const BloodTestList = () => {
     const { roleId } = useContext(UserContext);
@@ -61,7 +61,7 @@ const BloodTestList = () => {
                     <ListItem key={test.AnalisisID} alignItems="flex-start">
                         <Card variant="outlined" style={{ width: '100%' }}>
                             <CardContent>
-                                <Typography variant="h6">Análisis ID: {test.AnalisisID}</Typography>
+                                <Typography variant="h6">Análisis: {test.FechaRealizacion}</Typography>
                                 <Divider style={{ margin: '10px 0' }} />
                                 <Typography variant="body2">Fecha de Realización: {test.FechaRealizacion}</Typography>
                                 <Typography variant="body2">Resultados: {test.Resultados}</Typography>

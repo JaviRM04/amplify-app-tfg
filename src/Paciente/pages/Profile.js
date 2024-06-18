@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../../utils/UserContext';
 import { Card, CardContent, Typography, CircularProgress, Container, Snackbar, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import api from '../../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../../axiosConfig'; 
 
 const Profile = () => {
     const { userId, roleId } = useContext(UserContext);

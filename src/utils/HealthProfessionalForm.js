@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { TextField, Button, Container, Snackbar, Typography, Box } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import api from '../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../axiosConfig'; 
 import { UserContext } from './UserContext';  
 
 function HealthMedicalForm() {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import api from '../../../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../../../axiosConfig'; 
 import { Card, CardContent, Typography, CircularProgress, Container, TextField, Button, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 

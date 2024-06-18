@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import api from '../../../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../../../axiosConfig'; 
 import { TextField, Button, MenuItem, Container, Snackbar, Typography, CircularProgress } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 
@@ -66,6 +66,23 @@ function EditAppointmentForm() {
                 setSnackbarOpen(true);
                 setLoading(false);
             });
+    };
+
+    const handleDelete = async () => {
+        setLoading(true);
+        try {
+            await api.delete(`/appointments/${id}`);
+            setSnackbarMessage('Cita eliminada con éxito');
+            setSnackbarSeverity('success');
+            setLoading(false);
+            navigate('/appointments');
+        } catch (error) {
+            console.error('Error deleting appointment:', error);
+            setSnackbarMessage('Error eliminando la cita');
+            setSnackbarSeverity('error');
+            setLoading(false);
+            setSnackbarOpen(true);
+        }
     };
 
     const handleSnackbarClose = () => {
@@ -160,8 +177,11 @@ function EditAppointmentForm() {
                 fullWidth
                 margin="normal"
             />
-            <Button variant="contained" color="primary" onClick={handleSave} style={{ marginTop: '10px' }}>
+            <Button variant="contained" color="primary" onClick={handleSave} style={{ marginTop: '10px', marginRight: '10px' }}>
                 Guardar
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleDelete} style={{ marginTop: '10px' }}>
+                Borrar
             </Button>
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <MuiAlert onClose={handleSnackbarClose} severity={snackbarSeverity} elevation={6} variant="filled">

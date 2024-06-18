@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Typography, Paper, CircularProgress } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
-import api from '../../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../../axiosConfig'; 
 
 const BloodTestReport = () => {
     const { id } = useParams();
@@ -83,7 +83,7 @@ const BloodTestReport = () => {
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
-                Informe del Análisis de Sangre - ID {bloodTest.AnalisisID}
+                Informe del Análisis de Sangre  {bloodTest.FechaRealizacion}
             </Typography>
             <Paper style={{ padding: '20px', marginTop: '20px' }}>
                 <Typography variant="h6" gutterBottom>

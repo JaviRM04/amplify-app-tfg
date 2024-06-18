@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { List, ListItem, Card, CardContent, Typography, Divider, Button, Snackbar } from '@mui/material';
+import {  Typography, Button, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import api from '../../../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../../../axiosConfig'; 
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+const localizer = momentLocalizer(moment);
 
 function AppointmentsList() {
     const [appointments, setAppointments] = useState([]);
@@ -24,67 +29,38 @@ function AppointmentsList() {
         }
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await api.delete(`/appointments/${id}`);
-            setSnackbarMessage('Cita eliminada con éxito');
-            setSnackbarSeverity('success');
-            fetchAppointments();
-        } catch (error) {
-            console.error('Error deleting appointment:', error);
-            setSnackbarMessage('Error eliminando la cita');
-            setSnackbarSeverity('error');
-        } finally {
-            setSnackbarOpen(true);
-        }
-    };
+
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
     };
+
+    const events = appointments.map(appointment => ({
+        id: appointment.CitaID,
+        title: moment(appointment.FechaHora).format('DD/MM/YYYY HH:mm'),
+        start: new Date(appointment.FechaHora),
+        end: new Date(new Date(appointment.FechaHora).getTime() + 30 * 60000), // assuming each appointment lasts 30 minutes
+        allDay: false
+    }));
 
     return (
         <div style={{ padding: '20px' }}>
             <Typography variant="h2" gutterBottom>
                 Lista de Citas
             </Typography>
-            <Button variant="contained" color="primary" onClick={() => navigate('/appointments/new')}>
+            <Button variant="contained" color="primary" onClick={() => navigate('/appointments/new')} style={{ marginBottom: '20px' }}>
                 Crear Nueva Cita
             </Button>
-            <List>
-                {appointments.map((appointment) => (
-                    <ListItem key={appointment.CitaID} alignItems="flex-start">
-                        <Card variant="outlined" style={{ width: '100%' }}>
-                            <CardContent>
-                                <Typography variant="h6">Cita ID: {appointment.CitaID}</Typography>
-                                <Divider style={{ margin: '10px 0' }} />
-                                <Typography variant="body2">Paciente ID: {appointment.PacienteID}</Typography>
-                                <Typography variant="body2">Recepcionista ID: {appointment.RecepcionistaID}</Typography>
-                                <Typography variant="body2">Profesional ID: {appointment.ProfesionalID}</Typography>
-                                <Typography variant="body2">Fecha y Hora: {appointment.FechaHora}</Typography>
-                                <Typography variant="body2">Estado: {appointment.Estado}</Typography>
-                                <Typography variant="body2">Notas: {appointment.Notas}</Typography>
-                                <Button 
-                                    variant="contained" 
-                                    color="primary" 
-                                    style={{ marginTop: '10px', marginRight: '10px' }}
-                                    onClick={() => navigate(`/appointments/edit/${appointment.CitaID}`)}
-                                >
-                                    Editar
-                                </Button>
-                                <Button 
-                                    variant="contained" 
-                                    color="secondary" 
-                                    style={{ marginTop: '10px' }}
-                                    onClick={() => handleDelete(appointment.CitaID)}
-                                >
-                                    Borrar
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </ListItem>
-                ))}
-            </List>
+            <div style={{ height: '600px' }}>
+                <Calendar
+                    localizer={localizer}
+                    events={events}
+                    startAccessor="start"
+                    endAccessor="end"
+                    style={{ height: '100%' }}
+                    onSelectEvent={event => navigate(`/appointments/edit/${event.id}`)}
+                />
+            </div>
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <MuiAlert onClose={handleSnackbarClose} severity={snackbarSeverity} elevation={6} variant="filled">
                     {snackbarMessage}

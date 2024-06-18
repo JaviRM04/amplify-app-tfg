@@ -1,16 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Container, Typography, CircularProgress, Paper, Box } from '@mui/material';
-import { UserContext } from '../../utils/UserContext';  // Asegúrate de que la ruta sea correcta
 
 const Dashboard = () => {
-    const { userName } = useContext(UserContext);  // Obtener el nombre del usuario del contexto
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Aquí podrías hacer llamadas a la API si necesitas datos adicionales
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -38,7 +35,7 @@ const Dashboard = () => {
         <Container>
             <Paper elevation={3} style={{ padding: '30px', marginTop: '20px' }}>
                 <Typography variant="h2" gutterBottom>
-                    Bienvenido, {userName}
+                    Bienvenido
                 </Typography>
                 <Box mt={4} mb={4}>
                     <Typography variant="h5" gutterBottom style={{ color: '#4caf50' }}>

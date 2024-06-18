@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import { Card, CardContent, Typography, CircularProgress, Container, TextField, Button, List, ListItem, Divider, Snackbar, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
-import api from '../../../axiosConfig'; // Importa la instancia de Axios configurada
-
+import api from '../../../axiosConfig'; 
+import moment from 'moment';
 function PatientProfile() {
     const { id } = useParams();
     const [patient, setPatient] = useState(null);
@@ -58,25 +58,7 @@ function PatientProfile() {
         fetchPatientData();
     }, [id]);
 
-    const handleSave = () => {
-        setLoading(true);
-        api.put(`/patients/${id}`, patient)
-        .then(response => {
-            setIsEditing(false);
-            setLoading(false);
-            setSnackbarMessage('Paciente actualizado con éxito');
-            setSnackbarSeverity('success');
-            setSnackbarOpen(true);
-        })
-        .catch(err => {
-            console.error('Error updating patient details:', err);
-            setError('Error updating patient details');
-            setLoading(false);
-            setSnackbarMessage('Error actualizando el paciente');
-            setSnackbarSeverity('error');
-            setSnackbarOpen(true);
-        });
-    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -202,102 +184,15 @@ function PatientProfile() {
         { name: 'proteina_c_reactiva', value: bloodTest.proteina_c_reactiva },
     ];
 
+    const formatDate = (date) => {
+        return moment(date).format('DD/MM/YYYY HH:mm');
+    };
     return (
         <Container>
             <Card raised>
                 <CardContent>
                     <Typography variant="h4" gutterBottom>Perfil del Paciente</Typography>
-                    {patient ? (
-                        <>
-                            {isEditing ? (
-                                <>
-                                    <TextField
-                                        label="DNI"
-                                        name="DNI"
-                                        value={patient.DNI}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Fecha de Nacimiento"
-                                        name="FechaNacimiento"
-                                        type="date"
-                                        value={patient.FechaNacimiento}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                        InputLabelProps={{ shrink: true }}
-                                    />
-                                    <TextField
-                                        label="Género"
-                                        name="Genero"
-                                        value={patient.Genero}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Dirección"
-                                        name="Direccion"
-                                        value={patient.Direccion}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Número de Seguridad Social"
-                                        name="NumeroSeguridadSocial"
-                                        value={patient.NumeroSeguridadSocial}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Grupo Sanguíneo"
-                                        name="GrupoSanguineo"
-                                        value={patient.GrupoSanguineo}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Alergias"
-                                        name="Alergias"
-                                        value={patient.Alergias}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Antecedentes Personales"
-                                        name="AntecedentesPersonales"
-                                        value={patient.AntecedentesPersonales}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Antecedentes Familiares"
-                                        name="AntecedentesFamiliares"
-                                        value={patient.AntecedentesFamiliares}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <TextField
-                                        label="Notas Médicas"
-                                        name="NotasMedicas"
-                                        value={patient.NotasMedicas}
-                                        onChange={handleInputChange}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <Button variant="contained" color="primary" onClick={handleSave} style={{ marginTop: '10px' }}>
-                                        Guardar
-                                    </Button>
-                                </>
-                            ) : (
+                    
                                 <>
                                     <Typography variant="h6">DNI: {patient.DNI}</Typography>
                                     <Typography color="textSecondary">Fecha de Nacimiento: {patient.FechaNacimiento}</Typography>
@@ -309,15 +204,8 @@ function PatientProfile() {
                                     <Typography color="textSecondary">Antecedentes Personales: {patient.AntecedentesPersonales}</Typography>
                                     <Typography color="textSecondary">Antecedentes Familiares: {patient.AntecedentesFamiliares}</Typography>
                                     <Typography color="textSecondary">Notas Médicas: {patient.NotasMedicas}</Typography>
-                                    <Button variant="contained" color="primary" onClick={() => setIsEditing(true)} style={{ marginTop: '10px' }}>
-                                        Editar
-                                    </Button>
                                 </>
-                            )}
-                        </>
-                    ) : (
-                        <Typography color="textSecondary">No se encontraron detalles para el paciente con ID {id}.</Typography>
-                    )}
+                    
                 </CardContent>
             </Card>
 
@@ -329,7 +217,7 @@ function PatientProfile() {
                     <ListItem key={appointment.CitaID} alignItems="flex-start">
                         <Card variant="outlined" style={{ width: '100%' }}>
                             <CardContent>
-                                <Typography variant="h6">Cita ID: {appointment.CitaID}</Typography>
+                                <Typography variant="h6">Cita : {formatDate(appointment.FechaHora)}</Typography>
                                 <Divider style={{ margin: '10px 0' }} />
                                 <Typography variant="body2">Fecha y Hora: {appointment.FechaHora}</Typography>
                                 <Typography variant="body2">Estado: {appointment.Estado}</Typography>
@@ -352,7 +240,7 @@ function PatientProfile() {
                     <ListItem key={test.AnalisisID} alignItems="flex-start">
                         <Card variant="outlined" style={{ width: '100%', marginBottom: '20px' }}>
                             <CardContent>
-                                <Typography variant="h6">Análisis de Sangre ID: {test.AnalisisID}</Typography>
+                                <Typography variant="h6">Análisis de Sangre : {test.FechaRealizacion}</Typography>
                                 <Typography variant="body2">Fecha de Realización: {test.FechaRealizacion}</Typography>
                                 <Typography variant="body2">Resultados: {test.Resultados}</Typography>
                                 <Typography variant="body2">Observaciones: {test.Observaciones}</Typography>

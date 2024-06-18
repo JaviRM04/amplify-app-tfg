@@ -2,8 +2,8 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, MenuItem, Container, Snackbar, Typography } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import { UserContext } from '../../../utils/UserContext';  // Asegúrate de que la ruta sea correcta
-import api from '../../../axiosConfig'; // Importa la instancia de Axios configurada
+import { UserContext } from '../../../utils/UserContext';  
+import api from '../../../axiosConfig'; 
 
 function AppointmentForm() {
     const { userId } = useContext(UserContext); 

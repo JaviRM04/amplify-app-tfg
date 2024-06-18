@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../../axiosConfig'; // Importa la instancia de Axios configurada
-import { List, ListItem, Card, CardContent, Typography, Divider, Button, Snackbar } from '@mui/material';
+import api from '../../../axiosConfig'; 
+import { List, ListItem, Card, CardContent, Typography, Divider, Button, Snackbar, useRadioGroup } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 
 function PatientList() {
@@ -12,36 +12,39 @@ function PatientList() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchPatients();
+        fetchPatientsAndUsers();
     }, []);
 
-    const fetchPatients = async () => {
+    const fetchPatientsAndUsers = async () => {
         try {
-            const response = await api.get('/patients');
-            console.log(response.data);
-            setPatients(response.data);
+            const patientsResponse = await api.get('/patients');
+            
+            const usersResponse = await api.get('/users');
+            const patientsData = patientsResponse.data;
+            const usersData = usersResponse.data.filter(user => user.Rol === 'Paciente');
+           
+            const combinedData = patientsData.map(patient => {
+                const user = usersData.find(user => user.UserID === patient.UserID);
+                return { 
+                    ...patient, 
+                    Nombre: user ? user.Nombre : null,
+                    Email: user ? user.Email : null,
+                    Teléfono: user ? user.Teléfono : null,
+                    Dirección: user ? user.Dirección : null,
+                    FechaRegistro: user ? user.FechaRegistro : null
+                };
+            });
+           
+            setPatients(combinedData);
         } catch (error) {
-            console.error('There was an error fetching the patient data:', error);
-            setSnackbarMessage('Error fetching patient data');
+            console.error('There was an error fetching the patient and user data:', error);
+            setSnackbarMessage('Error fetching patient and user data');
             setSnackbarSeverity('error');
             setSnackbarOpen(true);
         }
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await api.delete(`/patients/${id}`);
-            setSnackbarMessage('Paciente eliminado con éxito');
-            setSnackbarSeverity('success');
-            fetchPatients();
-        } catch (error) {
-            console.error('Error deleting patient:', error);
-            setSnackbarMessage('Error eliminando el paciente');
-            setSnackbarSeverity('error');
-        } finally {
-            setSnackbarOpen(true);
-        }
-    };
+ 
 
     const handleSnackbarClose = () => {
         setSnackbarOpen(false);
@@ -52,34 +55,27 @@ function PatientList() {
             <Typography variant="h2" gutterBottom>
                 Lista de Pacientes
             </Typography>
-            <Button
-                variant="contained"
-                color="primary"
-                style={{ marginBottom: '20px' }}
-                onClick={() => navigate('/patients/new')}
-            >
-                Crear Nuevo Paciente
-            </Button>
             <List>
                 {patients.map((patient) => (
                     <ListItem key={patient.PacienteID} alignItems="flex-start">
                         <Card variant="outlined" style={{ width: '100%' }}>
                             <CardContent>
-                                <Typography variant="h6">Paciente ID: {patient.PacienteID}</Typography>
+                                <Typography variant="h6">Paciente : {patient.Nombre || patient.nombre}</Typography>
                                 <Divider style={{ margin: '10px 0' }} />
                                 <Typography variant="body2">DNI: {patient.DNI}</Typography>
-                                <Typography variant="body2">Nombre: {patient.nombre}</Typography>
+                                <Typography variant="body2">Nombre: {patient.Nombre || patient.nombre}</Typography>
                                 <Typography variant="body2">Fecha de Nacimiento: {patient.FechaNacimiento}</Typography>
                                 <Typography variant="body2">Género: {patient.Genero}</Typography>
                                 <Typography variant="body2">Grupo Sanguíneo: {patient.GrupoSanguineo}</Typography>
-                                <Typography variant="body2">Teléfono: {patient.telefono}</Typography>
-                                <Typography variant="body2">Email: {patient.email}</Typography>
-                                <Typography variant="body2">Dirección: {patient.Direccion}</Typography>
+                                <Typography variant="body2">Teléfono: {patient.Teléfono || patient.telefono}</Typography>
+                                <Typography variant="body2">Email: {patient.Email || patient.email}</Typography>
+                                <Typography variant="body2">Dirección: {patient.Dirección || patient.Direccion}</Typography>
                                 <Typography variant="body2">Número de Seguridad Social: {patient.NumeroSeguridadSocial}</Typography>
                                 <Typography variant="body2">Alergias: {patient.Alergias}</Typography>
                                 <Typography variant="body2">Antecedentes Personales: {patient.AntecedentesPersonales}</Typography>
                                 <Typography variant="body2">Antecedentes Familiares: {patient.AntecedentesFamiliares}</Typography>
                                 <Typography variant="body2">Notas Médicas: {patient.NotasMedicas}</Typography>
+                                <Typography variant="body2">Fecha de Registro: {patient.FechaRegistro}</Typography>
                                 <Button
                                     variant="contained"
                                     color="primary"
@@ -87,14 +83,6 @@ function PatientList() {
                                     onClick={() => navigate(`/patient/${patient.PacienteID}`)}
                                 >
                                     Ver Perfil
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color="secondary"
-                                    style={{ marginTop: '10px' }}
-                                    onClick={() => handleDelete(patient.PacienteID)}
-                                >
-                                    Borrar
                                 </Button>
                             </CardContent>
                         </Card>

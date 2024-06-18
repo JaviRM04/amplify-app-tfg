@@ -1,8 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { UserContext } from '../../utils/UserContext';
-import { List, ListItem, Card, CardContent, Typography, Divider, Container, CircularProgress, Snackbar } from '@mui/material';
+import { Container, Typography, CircularProgress, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import api from '../../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../../axiosConfig'; 
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+const localizer = momentLocalizer(moment);
 
 const AppointmentsList = () => {
     const { roleId } = useContext(UserContext);
@@ -12,15 +17,13 @@ const AppointmentsList = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-    const [filteredAppointments, setFilteredAppointments] = useState(null);
 
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
                 const response = await api.get('/appointments');
                 const filteredAppoint = response.data.filter(test => test.PacienteID === parseInt(roleId));
-                setFilteredAppointments(filteredAppoint);
-                setAppointments(response.data);
+                setAppointments(filteredAppoint);
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching appointments:', err);
@@ -51,26 +54,28 @@ const AppointmentsList = () => {
         return <Typography variant="h6" color="error">{error}</Typography>;
     }
 
+    const events = appointments.map(appointment => ({
+        id: appointment.CitaID,
+        title: moment(appointment.FechaHora).format('DD/MM/YYYY HH:mm'),
+        start: new Date(appointment.FechaHora),
+        end: new Date(new Date(appointment.FechaHora).getTime() + 30 * 60000), 
+        allDay: false
+    }));
+
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
                 Lista de Citas
             </Typography>
-            <List>
-                {filteredAppointments.map((appointment) => (
-                    <ListItem key={appointment.CitaID} alignItems="flex-start">
-                        <Card variant="outlined" style={{ width: '100%' }}>
-                            <CardContent>
-                                <Typography variant="h6">Cita ID: {appointment.CitaID}</Typography>
-                                <Divider style={{ margin: '10px 0' }} />
-                                <Typography variant="body2">Fecha y Hora: {appointment.FechaHora}</Typography>
-                                <Typography variant="body2">Estado: {appointment.Estado}</Typography>
-                                <Typography variant="body2">Notas: {appointment.Notas}</Typography>
-                            </CardContent>
-                        </Card>
-                    </ListItem>
-                ))}
-            </List>
+            <div style={{ height: '600px' }}>
+                <Calendar
+                    localizer={localizer}
+                    events={events}
+                    startAccessor="start"
+                    endAccessor="end"
+                    style={{ height: '100%' }}
+                />
+            </div>
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <MuiAlert onClose={handleSnackbarClose} severity={snackbarSeverity} elevation={6} variant="filled">
                     {snackbarMessage}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../../axiosConfig'; // Importa la instancia de Axios configurada
+import api from '../../../axiosConfig'; 
 import { useNavigate } from 'react-router-dom';
 import { List, ListItem, Card, CardContent, Typography, Divider, Button, Snackbar } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
@@ -9,7 +9,7 @@ function UsersList() {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState('success');
-    const navigate = useNavigate();  // Hook para navegar
+    const navigate = useNavigate();  
 
     useEffect(() => {
         fetchUsers();
@@ -48,14 +48,6 @@ function UsersList() {
             <Typography variant="h2" gutterBottom>
                 Lista de Usuarios
             </Typography>
-            <Button
-                variant="contained"
-                color="primary"
-                style={{ marginBottom: '20px' }}
-                onClick={() => navigate('/users/new')}
-            >
-                Crear Nuevo Usuario
-            </Button>
             <List>
                 {users.map((user) => (
                     <ListItem key={user.UserID} alignItems="flex-start">

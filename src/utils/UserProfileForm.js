@@ -7,7 +7,7 @@ const UserProfileForm = ({ onSubmit, user }) => {
     Email: '',
     Teléfono: '',
     Dirección: '',
-    Rol: 'Paciente', 
+    Rol: '', 
     FechaRegistro: new Date().toISOString().split('T')[0],
     amplifyId: user.userId
   });
